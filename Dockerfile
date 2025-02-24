@@ -25,5 +25,7 @@ WORKDIR /root/
 # Копируем бинарный файл из builder-образа
 COPY --from=builder /app/main .
 
+EXPOSE 1323
+
 # Указываем команду для запуска
 CMD ["./main"]
