@@ -66,15 +66,6 @@ func Auth(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "Ошибка при создании токена")
 	}
 
-	// Set the token in a cookie
-	c.SetCookie(&http.Cookie{
-		Name:     "jwt",
-		Value:    tokenString,
-		Path:     "/",
-		HttpOnly: true, // Prevents JavaScript access to the cookie
-		Secure:   true, // Use true if using HTTPS
-	})
-
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "Аутентификация успешна",
 		"token":   tokenString,
