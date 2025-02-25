@@ -6,5 +6,5 @@ import (
 
 func New(e *echo.Echo) {
 	cors(e)
-	jwt(e)
+	jwtMiddleware(e)
 }
