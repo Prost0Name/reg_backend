@@ -2,12 +2,10 @@ package handlers
 
 import (
 	"net/http"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
 
-	"backend/internal/config"
+	"backend/internal/middleware"
 	"backend/internal/models"
 	"backend/internal/types"
 )
@@ -56,18 +54,14 @@ func Auth(c echo.Context) error {
 		})
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"login": creds.Login,
-		"exp":   time.Now().Add(time.Hour * 72).Unix(),
-	})
-
-	tokenString, err := token.SignedString(config.JwtSecret)
+	// Генерация токена
+	token, err := middleware.GenerateToken(creds.Login)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, "Ошибка при создании токена")
+		return c.String(http.StatusInternalServerError, "Ошибка при генерации токена")
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "Аутентификация успешна",
-		"token":   tokenString,
+		"token":   token,
 	})
 }
