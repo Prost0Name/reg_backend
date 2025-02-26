@@ -12,8 +12,8 @@ func New(e *echo.Echo) {
 	// Middleware для проверки JWT токена
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			// Пропускаем проверку токена для маршрута регистрации
-			if c.Request().URL.Path == "/register" {
+			// Пропускаем проверку токена для маршрутов регистрации и аутентификации
+			if c.Request().URL.Path == "/register" || c.Request().URL.Path == "/auth" {
 				return next(c)
 			}
 
