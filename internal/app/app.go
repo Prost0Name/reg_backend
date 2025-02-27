@@ -13,6 +13,7 @@ func New(log *slog.Logger, port string) {
 
 	routes.New(e, log)
 	middleware.New(e)
+	// middleware.cors(e)
 
 	if err := e.Start(":" + port); err != nil {
 		log.Error("Failed to start server", slog.Any("error", err))
