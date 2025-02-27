@@ -3,8 +3,6 @@ FROM golang:1.23-alpine AS builder
 # Устанавливаем необходимые инструменты для сборки
 RUN apk add --no-cache build-base
 
-ENV CONFIG_PATH=config/local.yaml
-
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
@@ -22,10 +20,16 @@ RUN CGO_ENABLED=0 go build -o main cmd/api/main.go
 FROM alpine:latest
 
 # Устанавливаем рабочую директорию
-WORKDIR /root/
+WORKDIR /app/
 
 # Копируем бинарный файл из builder-образа
 COPY --from=builder /app/main .
+
+# Копируем файл конфигурации
+COPY --from=builder /app/config/local.yaml ./config/local.yaml
+
+# Установите переменную окружения
+ENV CONFIG_PATH=/app/config/local.yaml
 
 EXPOSE 1323
 
