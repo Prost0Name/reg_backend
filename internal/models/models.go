@@ -2,7 +2,6 @@ package models
 
 import (
 	"backend/internal/config"
-	"log"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -16,11 +15,12 @@ type User struct {
 
 var DB *gorm.DB
 
-func InitDatabase() {
+func InitDatabase(dsn config.DSNConfig) {
 	var err error
-	DB, err = gorm.Open(postgres.Open(config.DSN), &gorm.Config{})
+	dsnString := "host=" + dsn.Host + " user=" + dsn.User + " password=" + dsn.Pass + " dbname=" + dsn.DBName + " port=" + dsn.Port + " sslmode=" + dsn.SSLMode
+	DB, err = gorm.Open(postgres.Open(dsnString), &gorm.Config{})
 	if err != nil {
-		log.Fatal("failed to connect database")
+		panic("failed to connect database")
 	}
 
 	DB.AutoMigrate(&User{})

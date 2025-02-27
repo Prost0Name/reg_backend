@@ -2,10 +2,9 @@ package models
 
 import (
 	"errors"
-	
+
 	"gorm.io/gorm"
 )
-
 
 func AddUser(login, password string) error {
 	user := User{Login: login, Password: password}

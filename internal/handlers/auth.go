@@ -3,65 +3,43 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/labstack/echo/v4"
-
-	"backend/internal/middleware"
 	"backend/internal/models"
-	"backend/internal/types"
+
+	"github.com/labstack/echo/v4"
 )
 
-func Register(c echo.Context) error {
-	creds := new(types.Credentials)
-	if err := c.Bind(creds); err != nil {
-		return c.String(http.StatusBadRequest, "Неверный формат данных")
-	}
-
-	exists, err := models.UserExists(creds.Login)
-	if err != nil {
-		return c.String(http.StatusInternalServerError, "Ошибка при проверке пользователя")
-	}
-
-	if exists {
-		return c.JSON(http.StatusConflict, map[string]string{
-			"message": "Пользователь с таким логином уже существует",
-		})
-	}
-
-	if err := models.AddUser(creds.Login, creds.Password); err != nil {
-		return c.String(http.StatusInternalServerError, "Ошибка при регистрации пользователя")
-	}
-
-	return c.JSON(http.StatusOK, map[string]string{
-		"message": "Регистрация успешно завершена",
-	})
+type RegisterRequest struct {
+	Login    string `json:"login" form:"login" binding:"required"`
+	Password string `json:"password" form:"password" binding:"required"`
 }
 
-func Auth(c echo.Context) error {
-	creds := new(types.Credentials)
-	if err := c.Bind(creds); err != nil {
-		return c.String(http.StatusBadRequest, "Неверный формат данных")
+type User struct {
+	Login    string
+	Password string
+}
+
+func (req *RegisterRequest) ToUser() User {
+	return User{
+		Login:    req.Login,
+		Password: req.Password,
+	}
+}
+
+func Register(c echo.Context) error {
+	var req RegisterRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid input"})
 	}
 
-	// Проверяем учетные данные пользователя
-	valid, err := models.ValidateUser(creds.Login, creds.Password)
-	if err != nil {
-		return c.String(http.StatusInternalServerError, "Ошибка при проверке учетных данных")
+	user := req.ToUser()
+
+	if user.Login == "" || user.Password == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Поле не может быть пустым"})
 	}
 
-	if !valid {
-		return c.JSON(http.StatusUnauthorized, map[string]string{
-			"message": "Неверный логин или пароль",
-		})
+	if err := models.AddUser(user.Login, user.Password); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	// Генерация токена
-	token, err := middleware.GenerateToken(creds.Login)
-	if err != nil {
-		return c.String(http.StatusInternalServerError, "Ошибка при генерации токена")
-	}
-
-	return c.JSON(http.StatusOK, map[string]string{
-		"message": "Аутентификация успешна",
-		"token":   token,
-	})
+	return c.JSON(http.StatusOK, map[string]string{"message": "User registered successfully"})
 }

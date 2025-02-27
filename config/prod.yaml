@@ -1,0 +1,4 @@
+env: "prod"
+app:
+  port: 1323
+  timeout: 5s

@@ -1,0 +1,12 @@
+env: "local"
+app:
+  port: 1323
+  timeout: 5s
+JwtSecret: "abacaba"
+dsn:
+  host: 87.242.100.33
+  user: root
+  password: reg2025
+  dbname: fullstack
+  port: 5432
+  sslmode: disable
