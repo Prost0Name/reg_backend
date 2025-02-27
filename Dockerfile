@@ -3,6 +3,8 @@ FROM golang:1.23-alpine AS builder
 # Устанавливаем необходимые инструменты для сборки
 RUN apk add --no-cache build-base
 
+ENV CONFIG_PATH=config/local.yaml
+
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
