@@ -1,22 +1,22 @@
 package app
 
 import (
+	"backend/internal/app/middleware"
 	"backend/internal/app/routes"
+	"log"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
 func New(port string) {
 	e := echo.New()
 
-	e.Use(middleware.Logger())
+	middleware.CORS(e)
 
 	routes.Users(e)
 	// middleware.New(e)
-	// middleware.cors(e)
 
 	if err := e.Start(":" + port); err != nil {
-		e.Logger.Fatal("Failed to start server: ", err)
+		log.Fatalf("Failed to start server: %v", err)
 	}
 }
