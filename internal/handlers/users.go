@@ -3,8 +3,6 @@ package handlers
 import (
 	"net/http"
 
-	"backend/internal/models"
-
 	"github.com/labstack/echo/v4"
 )
 
@@ -37,9 +35,9 @@ func Register(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Поле не может быть пустым"})
 	}
 
-	if err := models.AddUser(user.Login, user.Password); err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
+	// if err := models.AddUser(user.Login, user.Password); err != nil {
+	// 	return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	// }
 
-	return c.JSON(http.StatusOK, map[string]string{"message": "User registered successfully"})
+	return c.JSON(http.StatusOK, map[string]string{"message": "User registered successfully", "token": "token"})
 }

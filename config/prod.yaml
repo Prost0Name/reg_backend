@@ -2,3 +2,11 @@ env: "prod"
 app:
   port: 1323
   timeout: 5s
+jwt_secret: abacaba
+dsn:
+  host: 87.242.100.33
+  user: root
+  password: reg2025
+  dbname: fullstack
+  port: 5432
+  sslmode: disable

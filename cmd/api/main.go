@@ -1,13 +1,10 @@
 package main
 
 import (
-	"log/slog"
-	"os"
-
 	"backend/internal/app"
 	"backend/internal/config"
-	"backend/internal/lib/logger/handlers/slogpretty"
-	"backend/internal/models"
+	"backend/internal/model"
+	"fmt"
 )
 
 const (
@@ -18,38 +15,13 @@ const (
 func main() {
 	cfg := config.MustLoad()
 
-	log := setupLogger(cfg.Env)
+	fmt.Println(cfg.JwtSecret)
 
-	models.InitDatabase(cfg.DSN)
+	model.InitDatabase(cfg.DSN)
 
-	app.New(log, cfg.APP.Port)
+	app.New(cfg.APP.Port)
+
+	// app.New(log, cfg.APP.Port)
 
 	// e.Logger.Fatal(e.Start(":1323"))
-}
-
-func setupLogger(env string) *slog.Logger {
-	var log *slog.Logger
-
-	switch env {
-	case envLocal:
-		log = setupPrettySlog()
-	case envProd:
-		log = slog.New(
-			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
-		)
-	}
-
-	return log
-}
-
-func setupPrettySlog() *slog.Logger {
-	opts := slogpretty.PrettyHandlerOptions{
-		SlogOpts: &slog.HandlerOptions{
-			Level: slog.LevelDebug,
-		},
-	}
-
-	handler := opts.NewPrettyHandler(os.Stdout)
-
-	return slog.New(handler)
 }

@@ -1,12 +1,6 @@
 package config
 
-// var (
-// 	JwtSecret = []byte("your_secret_key")
-// 	DSN = "host=87.242.100.33 user=root password=reg2025 dbname=fullstack port=5432 sslmode=disable"
-// )
-
 import (
-	"flag"
 	"os"
 	"time"
 
@@ -36,7 +30,7 @@ type DSNConfig struct {
 }
 
 func MustLoad() *Config {
-	configPath := fetchConfigPath()
+	configPath := "config/local.yaml"
 	if configPath == "" {
 		panic("config path is empty")
 	}
@@ -56,17 +50,4 @@ func MustLoadPath(configPath string) *Config {
 	}
 
 	return &cfg
-}
-
-func fetchConfigPath() string {
-	var res string
-
-	flag.StringVar(&res, "config", "", "path to config file")
-	flag.Parse()
-
-	if res == "" {
-		res = os.Getenv("CONFIG_PATH")
-	}
-
-	return res
 }
