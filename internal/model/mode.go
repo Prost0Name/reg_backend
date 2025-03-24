@@ -13,6 +13,10 @@ type DBUser struct {
 	Password string
 }
 
+func (DBUser) TableName() string {
+	return "users"
+}
+
 var DB *gorm.DB
 
 func InitDatabase(dsn config.DSNConfig) error {
