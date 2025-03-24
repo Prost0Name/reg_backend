@@ -24,6 +24,9 @@ func Register(c echo.Context) error {
 	}
 
 	if err := model.CreateUser(req.Login, req.Password); err != nil {
+		if err.Error() == "пользователь уже существует" {
+			return c.JSON(http.StatusConflict, map[string]string{"error": "Пользователь уже существует"})
+		}
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Ошибка при сохранении пользователя"})
 	}
 
