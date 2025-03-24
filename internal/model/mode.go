@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type User struct {
+type DBUser struct {
 	gorm.Model
 	Login    string `gorm:"uniqueIndex"`
 	Password string
@@ -23,5 +23,5 @@ func InitDatabase(dsn config.DSNConfig) {
 		panic("failed to connect database")
 	}
 
-	DB.AutoMigrate(&User{})
+	DB.AutoMigrate(&DBUser{})
 }
