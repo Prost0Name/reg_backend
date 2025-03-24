@@ -15,13 +15,14 @@ type DBUser struct {
 
 var DB *gorm.DB
 
-func InitDatabase(dsn config.DSNConfig) {
+func InitDatabase(dsn config.DSNConfig) error {
 	var err error
 	dsnString := "host=" + dsn.Host + " user=" + dsn.User + " password=" + dsn.Pass + " dbname=" + dsn.DBName + " port=" + dsn.Port + " sslmode=" + dsn.SSLMode
 	DB, err = gorm.Open(postgres.Open(dsnString), &gorm.Config{})
 	if err != nil {
-		panic("failed to connect database")
+		return err
 	}
 
 	DB.AutoMigrate(&DBUser{})
+	return nil
 }

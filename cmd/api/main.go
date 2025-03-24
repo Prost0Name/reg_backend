@@ -19,7 +19,7 @@ func main() {
 
 	model.InitDatabase(cfg.DSN)
 
-	app.New(cfg.APP.Port)
+	app.New(cfg)
 
 	// app.New(log, cfg.APP.Port)
 
