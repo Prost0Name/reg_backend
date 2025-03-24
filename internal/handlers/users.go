@@ -32,3 +32,23 @@ func Register(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]string{"message": "User registered successfully", "token": "token"})
 }
+
+type LoginRequest struct {
+	Login    string `json:"login" form:"login" binding:"required"`
+	Password string `json:"password" form:"password" binding:"required"`
+}
+
+func Login(c echo.Context) error {
+	var req LoginRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid input"})
+	}
+
+	user, err := model.GetUserByLogin(req.Login)
+	if err != nil || user.Password != req.Password {
+		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "Invalid login or password"})
+	}
+
+	// Here you would generate a token and return it
+	return c.JSON(http.StatusOK, map[string]string{"message": "Login successful", "token": "token"})
+}

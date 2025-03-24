@@ -25,3 +25,12 @@ func CreateUser(login string, password string) error {
 	}
 	return DB.Create(&user).Error
 }
+
+// GetUserByLogin retrieves a user by login
+func GetUserByLogin(login string) (*DBUser, error) {
+	var user DBUser
+	if err := DB.Where("login = ?", login).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
