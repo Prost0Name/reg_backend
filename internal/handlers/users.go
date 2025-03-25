@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"backend/internal/model"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
 
@@ -30,7 +32,7 @@ func Register(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Ошибка при сохранении пользователя"})
 	}
 
-	return c.JSON(http.StatusOK, map[string]string{"message": "User registered successfully", "token": "token"})
+	return c.JSON(http.StatusOK, map[string]string{"message": "User registered successfully"})
 }
 
 type LoginRequest struct {
@@ -49,6 +51,20 @@ func Login(c echo.Context) error {
 		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "Invalid login or password"})
 	}
 
-	// Here you would generate a token and return it
-	return c.JSON(http.StatusOK, map[string]string{"message": "Login successful", "token": "token"})
+	token, err := generateJWT(req.Login)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Ошибка при создании токена"})
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "Login successful", "token": token})
+}
+
+func generateJWT(login string) (string, error) {
+	claims := &jwt.MapClaims{
+		"login": login,
+		"exp":   time.Now().Add(time.Hour * 72).Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte("your_secret_key")) // Replace "your_secret_key" with your actual secret
 }

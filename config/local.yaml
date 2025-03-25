@@ -2,7 +2,7 @@ env: "local"
 app:
   port: 1323
   timeout: 5s
-JwtSecret: abacaba
+JwtSecret: your_secret_key
 dsn:
   host: 87.242.100.33
   user: root
