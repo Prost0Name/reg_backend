@@ -10,7 +10,8 @@ import (
 type DBUser struct {
 	gorm.Model
 	Login    string `gorm:"uniqueIndex"`
-	Password string
+	Email    string `gorm:"uniqueIndex"`
+	Password string `gorm:"not null"`
 }
 
 func (DBUser) TableName() string {

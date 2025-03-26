@@ -12,6 +12,7 @@ import (
 
 type RegisterRequest struct {
 	Login    string `json:"login" form:"login" binding:"required"`
+	Email    string `json:"email" form:"email" binding:"required,email"`
 	Password string `json:"password" form:"password" binding:"required"`
 }
 
@@ -21,11 +22,11 @@ func Register(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid input"})
 	}
 
-	if req.Login == "" || req.Password == "" {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Поле не может быть пустым"})
+	if req.Login == "" || req.Password == "" || req.Email == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Все поля обязательны для заполнения"})
 	}
 
-	if err := model.CreateUser(req.Login, req.Password); err != nil {
+	if err := model.CreateUser(req.Login, req.Email, req.Password); err != nil {
 		if err.Error() == "пользователь уже существует" {
 			return c.JSON(http.StatusConflict, map[string]string{"error": "Пользователь уже существует"})
 		}

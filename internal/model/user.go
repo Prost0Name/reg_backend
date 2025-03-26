@@ -8,11 +8,12 @@ import (
 
 type User struct {
 	Login    string `json:"login" gorm:"uniqueIndex"`
+	Email    string `json:"email" gorm:"uniqueIndex"`
 	Password string `json:"password"`
 }
 
 // CreateUser создает нового пользователя и сохраняет его в базе данных
-func CreateUser(login string, password string) error {
+func CreateUser(login string, email string, password string) error {
 	// Проверяем, существует ли пользователь
 	var existingUser DBUser
 	if err := DB.Where("login = ?", login).First(&existingUser).Error; err == nil {
@@ -21,6 +22,7 @@ func CreateUser(login string, password string) error {
 
 	user := DBUser{
 		Login:    login,
+		Email:    email,
 		Password: password,
 	}
 	return DB.Create(&user).Error
