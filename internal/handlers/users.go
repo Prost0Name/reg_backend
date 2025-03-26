@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"backend/internal/model"
+	"backend/utils"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
@@ -31,6 +32,13 @@ func Register(c echo.Context) error {
 			return c.JSON(http.StatusConflict, map[string]string{"error": "Пользователь уже существует"})
 		}
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Ошибка при сохранении пользователя"})
+	}
+
+	// Отправка сообщения об успешной регистрации
+	subject := "Успешная регистрация"
+	body := "Добро пожаловать, " + req.Login + "! Вы успешно зарегистрированы."
+	if err := utils.SendEmail(req.Email, subject, body); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Ошибка при отправке письма"})
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{"message": "User registered successfully"})
