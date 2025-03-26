@@ -7,7 +7,7 @@ import (
 // SendEmail отправляет электронное письмо с сообщением о регистрации
 func SendEmail(to string, subject string, body string) error {
 	from := "vsrs-rs@yandex.com"   // Убедитесь, что вы установили переменную окружения SMTP_FROM
-	password := "hecshrwpjigzeokn" // Убедитесь, что вы установили переменную окружения SMTP_PASSWORD
+	password := "bcwuvmpwcouupjwn" // Обновлено: используем тот же пароль, что и в main.go
 
 	smtpHost := "smtp.yandex.ru" // Замените на ваш SMTP сервер
 	smtpPort := "587"            // Замените на ваш SMTP порт
