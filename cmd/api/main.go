@@ -16,8 +16,4 @@ func main() {
 	model.InitDatabase(cfg.DSN)
 
 	app.New(cfg)
-
-	// app.New(log, cfg.APP.Port)
-
-	// e.Logger.Fatal(e.Start(":1323"))
 }
