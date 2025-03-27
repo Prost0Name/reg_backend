@@ -4,6 +4,7 @@ import (
 	"backend/internal/app"
 	"backend/internal/config"
 	"backend/internal/model"
+	"backend/internal/redis"
 	"fmt"
 )
 
@@ -13,6 +14,7 @@ const (
 )
 
 func main() {
+	redis.InitRedis()
 	cfg := config.MustLoad()
 
 	fmt.Println(cfg.JwtSecret)
