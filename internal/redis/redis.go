@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	"log"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -9,11 +10,20 @@ import (
 var Client *redis.Client
 
 func InitRedis() {
-	Client = redis.NewClient(&redis.Options{
-		Addr:     "87.242.100.33:6379",
-		Password: "reg2025", // no password set
-		DB:       0,         // use default DB
-	})
+	ctx := context.Background()                                              // Создаем контекст
+	opt, err := redis.ParseURL("redis://default:reg2025@87.242.100.33:6379") // Используем URL для инициализации
+	if err != nil {
+		log.Fatalf("Ошибка парсинга URL: %v", err)
+	}
+
+	Client = redis.NewClient(opt)
+
+	// Тестируем соединение
+	pong, err := Client.Ping(ctx).Result()
+	if err != nil {
+		log.Fatalf("Ошибка подключения к Redis: %v", err)
+	}
+	log.Println("Успешное подключение:", pong)
 }
 
 func SetUserData(token string, data interface{}) error {
