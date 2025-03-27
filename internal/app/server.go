@@ -5,7 +5,6 @@ import (
 	"backend/internal/app/routes"
 	"backend/internal/config"
 	"backend/internal/model"
-	"backend/internal/redis"
 	"log"
 
 	"github.com/labstack/echo/v4"
@@ -17,8 +16,6 @@ func New(cfg *config.Config) {
 	if err := model.InitDatabase(cfg.DSN); err != nil {
 		log.Fatalf("Could not initialize database: %v", err)
 	}
-
-	redis.InitRedis()
 
 	middleware.CORS(e)
 

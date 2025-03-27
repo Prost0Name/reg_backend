@@ -14,9 +14,8 @@ const (
 )
 
 func main() {
-	redis.InitRedis()
 	cfg := config.MustLoad()
-
+	redis.InitRedis()
 	fmt.Println(cfg.JwtSecret)
 
 	model.InitDatabase(cfg.DSN)
