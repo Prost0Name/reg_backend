@@ -64,6 +64,7 @@ func Register(c echo.Context, cfg *config.Config) error {
 	subject := "Подтверждение регистрации"
 	body := "Пожалуйста, подтвердите вашу регистрацию, перейдя по следующей ссылке: https://api.vsrs-rs.ru/confirm?token=" + token
 	if err := utils.SendEmail(req.Email, subject, body); err != nil {
+		log.Fatalf("Ошибка при отправке письма: %v", err)
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Ошибка при отправке письма"})
 	}
 
