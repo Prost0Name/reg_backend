@@ -8,11 +8,6 @@ import (
 	"fmt"
 )
 
-const (
-	envLocal = "local"
-	envProd  = "prod"
-)
-
 func main() {
 	cfg := config.MustLoad()
 	redis.InitRedis()

@@ -8,11 +8,11 @@ import (
 )
 
 type Config struct {
-	Env       string        `yaml:"env" env-default:"local"`
-	APP       APPConfig     `yaml:"app"`
-	TokenTTL  time.Duration `yaml:"token_ttl" env-default:"1h"`
-	JwtSecret string        `yaml:"JwtSecret"`
-	DSN       DSNConfig     `yaml:"dsn"`
+	Env       string    `yaml:"env" env-default:"local"`
+	APP       APPConfig `yaml:"app"`
+	TokenTTL  int       `yaml:"token_ttl" env-default:"300"`
+	JwtSecret string    `yaml:"JwtSecret"`
+	DSN       DSNConfig `yaml:"dsn"`
 }
 
 type APPConfig struct {

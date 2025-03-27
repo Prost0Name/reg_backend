@@ -19,7 +19,7 @@ func New(cfg *config.Config) {
 
 	middleware.CORS(e)
 
-	routes.Users(e)
+	routes.Users(e, cfg)
 
 	if err := e.Start(":" + cfg.APP.Port); err != nil {
 		log.Fatalf("Failed to start server: %v", err)

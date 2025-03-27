@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	"backend/internal/config"
 	"backend/internal/model"
 	"backend/internal/redis"
 	"backend/utils"
@@ -11,6 +12,8 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
+
+	"log"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
@@ -31,7 +34,7 @@ func generateRandomToken() (string, error) {
 	return base64.URLEncoding.EncodeToString(b), nil
 }
 
-func Register(c echo.Context) error {
+func Register(c echo.Context, cfg *config.Config) error {
 	var req RegisterRequest
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid input"})
@@ -52,13 +55,14 @@ func Register(c echo.Context) error {
 		"email":    req.Email,
 		"password": req.Password,
 	}
-	if err := redis.SetUserData(token, userData); err != nil {
+	if err := redis.SetUserData(token, userData, cfg.TokenTTL); err != nil {
+		log.Printf("Ошибка при сохранении данных в Redis: %v", err)
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Ошибка при сохранении данных в Redis"})
 	}
 
 	// Send confirmation email with the token link
 	subject := "Подтверждение регистрации"
-	body := "Пожалуйста, подтвердите вашу регистрацию, перейдя по следующей ссылке: http://yourdomain.com/confirm?token=" + token
+	body := "Пожалуйста, подтвердите вашу регистрацию, перейдя по следующей ссылке: https://api.vsrs-rs.ru/confirm?token=" + token
 	if err := utils.SendEmail(req.Email, subject, body); err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Ошибка при отправке письма"})
 	}
@@ -102,20 +106,27 @@ func generateJWT(login string) (string, error) {
 
 func ConfirmRegistration(c echo.Context) error {
 	token := c.QueryParam("token")
-	userData, err := redis.GetUserData(token)
+	userDataJSON, err := redis.GetUserData(token)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid or expired token"})
+		// Если токен не найден, перенаправляем на фронтенд с сообщением об ошибке
+		return c.Redirect(http.StatusFound, "https://vsrs-rs.ru/confirm?status=token_invalid")
 	}
 
-	// Parse userData and create user in DB
+	// Десериализуем данные пользователя
 	var user map[string]string
-	if err := json.Unmarshal([]byte(userData), &user); err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Ошибка при обработке данных пользователя"})
+	if err := json.Unmarshal([]byte(userDataJSON), &user); err != nil {
+		return c.Redirect(http.StatusFound, "https://vsrs-rs.ru/confirm?status=unknown_error")
 	}
 
 	if err := model.CreateUser(user["login"], user["email"], user["password"]); err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Ошибка при сохранении пользователя в БД"})
+		return c.Redirect(http.StatusFound, "https://vsrs-rs.ru/confirm?status=unknown_error")
 	}
 
-	return c.JSON(http.StatusOK, map[string]string{"message": "Registration confirmed successfully"})
+	// Удаляем данные пользователя из Redis
+	if err := redis.Client.Del(c.Request().Context(), token).Err(); err != nil {
+		log.Printf("Ошибка при удалении данных из Redis: %v", err)
+	}
+
+	// Успешная регистрация
+	return c.Redirect(http.StatusFound, "https://vsrs-rs.ru/confirm?status=success")
 }

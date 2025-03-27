@@ -2,6 +2,7 @@ env: "local"
 app:
   port: 1323
   timeout: 5s
+token_ttl: 300 
 JwtSecret: your_secret_key
 dsn:
   host: 87.242.100.33
