@@ -9,7 +9,7 @@ import (
 
 func CORS(e *echo.Echo) {
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"*"},
+		AllowOrigins: []string{"https://vsrs-rs.ru"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 		AllowMethods: []string{http.MethodGet, http.MethodPost},
 	}))

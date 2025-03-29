@@ -12,12 +12,11 @@ import (
 
 func New(cfg *config.Config) {
 	e := echo.New()
+	middleware.CORS(e)
 
 	if err := model.InitDatabase(cfg.DSN); err != nil {
 		log.Fatalf("Could not initialize database: %v", err)
 	}
-
-	middleware.CORS(e)
 
 	routes.Users(e, cfg)
 
