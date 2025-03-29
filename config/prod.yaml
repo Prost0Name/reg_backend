@@ -10,3 +10,8 @@ dsn:
   dbname: fullstack
   port: 5432
   sslmode: disable
+smtp:
+  from: "vsrs-rs@mail.ru"
+  password: "VwuD7ynRjauwecAN2PHs"
+  host: "smtp.mail.ru"
+  port: "587"

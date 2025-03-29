@@ -8,11 +8,12 @@ import (
 )
 
 type Config struct {
-	Env       string    `yaml:"env" env-default:"local"`
-	APP       APPConfig `yaml:"app"`
-	TokenTTL  int       `yaml:"token_ttl" env-default:"300"`
-	JwtSecret string    `yaml:"JwtSecret"`
-	DSN       DSNConfig `yaml:"dsn"`
+	Env       string     `yaml:"env" env-default:"local"`
+	APP       APPConfig  `yaml:"app"`
+	TokenTTL  int        `yaml:"token_ttl" env-default:"300"`
+	JwtSecret string     `yaml:"JwtSecret"`
+	DSN       DSNConfig  `yaml:"dsn"`
+	SMTP      SMTPConfig `yaml:"smtp"`
 }
 
 type APPConfig struct {
@@ -27,6 +28,13 @@ type DSNConfig struct {
 	DBName  string `yaml:"dbname"`
 	Port    string `yaml:"port"`
 	SSLMode string `yaml:"sslmode"`
+}
+
+type SMTPConfig struct {
+	From     string `yaml:"from"`
+	Password string `yaml:"password"`
+	Host     string `yaml:"host"`
+	Port     string `yaml:"port"`
 }
 
 func MustLoad() *Config {

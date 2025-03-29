@@ -44,6 +44,18 @@ func Register(c echo.Context, cfg *config.Config) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Все поля обязательны для заполнения"})
 	}
 
+	// Проверка существующего пользователя по логину
+	existingUserByLogin, err := model.GetUserByLogin(req.Login)
+	if err == nil && existingUserByLogin != nil {
+		return c.JSON(http.StatusConflict, map[string]string{"error": "Пользователь с таким логином уже существует"})
+	}
+
+	// Проверка существующего пользователя по email
+	existingUserByEmail, err := model.GetUserByEmail(req.Email)
+	if err == nil && existingUserByEmail != nil {
+		return c.JSON(http.StatusConflict, map[string]string{"error": "Пользователь с таким email уже существует"})
+	}
+
 	token, err := generateRandomToken()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Ошибка при генерации токена"})
@@ -61,10 +73,9 @@ func Register(c echo.Context, cfg *config.Config) error {
 	}
 
 	// Send confirmation email with the token link
-	
 	url := "https://api.vsrs-rs.ru/confirm?token=" + token
-	if err := utils.SendEmail(req.Email, url); err != nil {
-		log.Fatalf("Ошибка при отправке письма: %v", err)
+	if err := utils.SendEmail(req.Email, url, &cfg.SMTP); err != nil {
+		log.Printf("Ошибка при отправке письма: %v", err)
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Ошибка при отправке письма"})
 	}
 
