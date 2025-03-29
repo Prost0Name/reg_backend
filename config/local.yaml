@@ -1,7 +1,6 @@
 env: "local"
 app:
   port: 1323
-  timeout: 5s
 token_ttl: 300 
 JwtSecret: your_secret_key
 dsn:
@@ -12,7 +11,7 @@ dsn:
   port: 5432
   sslmode: disable
 smtp:
-  from: "vsrs-rs@mail.ru"
-  password: "VwuD7ynRjauwecAN2PHs"
-  host: "smtp.mail.ru"
-  port: "587"
+  from: vsrs-rs@mail.ru
+  password: VwuD7ynRjauwecAN2PHs
+  host: smtp.mail.ru
+  port: 587

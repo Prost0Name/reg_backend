@@ -5,6 +5,7 @@ import (
 	"backend/internal/config"
 	"backend/internal/model"
 	"backend/internal/redis"
+	"backend/utils"
 	"fmt"
 )
 
@@ -14,6 +15,9 @@ func main() {
 	fmt.Println(cfg.JwtSecret)
 
 	model.InitDatabase(cfg.DSN)
+	
+	// Start the email worker
+	utils.StartEmailWorker()
 
 	app.New(cfg)
 }
